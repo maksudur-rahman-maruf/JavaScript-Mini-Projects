@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.css" />
+    <title>Number Guesser</title>
+</head>
+<body>
+ <div class="container">
+     <h1>Number Guesser</h1>
+     <div id="game">
+       <p>Guess a number between <span class="min-num"></span> and <span class="max-num"></span></p>
+       <input type="number" id="guess-input" placeholder="Enter your guess...">
+       <input type="submit" value="Submit" id="guess-btn">
+       <p class="message"></p>
+     </div>
+ </div>
+
+  <script>
+    
+  // Game values
+  let min = 1,
+      max = 10,
+      winningNum = getRandomNum(min, max);
+      guessesLeft = 3;
+
+  // UI Element
+  const game = document.querySelector('#game');
+        minNum = document.querySelector('.min-num');
+        maxNum = document.querySelector('.max-num');
+        guessBtn = document.querySelector('#guess-btn');
+        guessInput = document.querySelector('#guess-input');
+        message = document.querySelector('.message');
+
+  // Assign UI min and max
+  minNum.textContent = min;
+  maxNum.textContent = max;
+
+  // play again event listener
+  game.addEventListener('mousedown', function(e) {
+     if(e.target.className === 'play-again') {
+       window.location.reload();
+     }
+  });
+  
+  // Listen for guess
+  guessBtn.addEventListener('click', function(){
+    let guess = parseInt(guessInput.value);
+    
+    // validate
+    if(isNaN(guess) || guess < min || guess > max){
+      setMessage(`Please enter a number between ${min} and ${max}.`, 'red');
+    }
+    
+    else {
+    // check if won
+    if(guess === winningNum){
+
+      gameOver(true,`${winningNum} is correct, YOU WIN!`);
+
+    } else {
+      guessesLeft -= 1;
+
+      if(guessesLeft === 0){
+
+        gameOver(false, `Game Over, you lost. The correct number was ${winningNum}`);
+
+      } else {
+        guessInput.style.borderColor = 'red';
+        guessInput.value = '';
+        setMessage(`${guess} is not correct, ${guessesLeft} guesses left.`,'red');
+      }
+
+    }
+
+  }
+
+  });
+
+  // Get Random Number
+  function getRandomNum(min,max) {
+      return Math.floor(Math.random()*(max-min+1)+min);
+  }
+
+  function gameOver(won, msg) {
+    let color;
+    won === true? color = 'green' : color = 'red';
+
+    guessInput.disabled = true;
+    guessInput.style.borderColor = color;
+    setMessage(msg, color);
+
+    // play again?
+    guessBtn.value = 'Play Again';
+    guessBtn.className = 'play-again';
+
+  }
+
+  // Set message
+  function setMessage(msg, color){
+    message.style.color = color;
+    message.textContent = msg;
+  }
+
+  </script>    
+ 
+
+</body>
+</html>
